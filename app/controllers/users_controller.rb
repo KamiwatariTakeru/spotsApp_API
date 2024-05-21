@@ -7,10 +7,24 @@ class UsersController < ApplicationController
     render json: @users
   end
 
+  # users/get_current_user/:uid
   def getCurrentUser
     authInfo = AuthInfo.find_by(id: params[:uid])
-    currentUser = User.find(authInfo.user_id)
+
+    unless authInfo
+      return render json: { error: "認証情報が見つかりませんでした" }, status: :bad_request
+    end
+
+    currentUser = User.find_by(id: authInfo.user_id)
+
+    unless currentUser
+      return render json: { error: "ユーザーが見つかりませんでした" }, status: :bad_request
+    end
+
     render json: currentUser
+
+  rescue StandardError => e
+    render json: { error: e.message }, status: :internal_server_error
   end
 
   # POST /users
@@ -22,7 +36,7 @@ class UsersController < ApplicationController
     if user and authInfo
       head :ok
     else
-      render json: { error: "ログインに失敗しました" }, status: :unprocessable_entity
+      return render json: { error: "ログインに失敗しました" }, status: :internal_server_error
     end
   rescue StandardError => e
     render json: { error: e.message }, status: :internal_server_error
@@ -33,7 +47,7 @@ class UsersController < ApplicationController
     if @user.update(user_params)
       render json: @user
     else
-      render json: @user.errors, status: :unprocessable_entity
+      render json: @user.errors, status: :internal_server_error
     end
   end
 
@@ -46,6 +60,9 @@ class UsersController < ApplicationController
     # Use callbacks to share common setup or constraints between actions.
     def set_user
       @user = User.find(params[:id])
+      unless user
+        return render json: { error: "ユーザーが見つかりませんでした" }, status: :bad_request
+      end
     end
 
     # Only allow a trusted parameter "white list" through.

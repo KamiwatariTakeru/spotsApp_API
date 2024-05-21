@@ -18,15 +18,14 @@ class SpotsController < ApplicationController
     @spot = Spot.new(spot_params)
     # 入力された住所から緯度経度を取得してテーブルに登録
     coordinate = geocode_address(params[:address])
-    puts coordinate[:lat]
-    puts coordinate[:lng]
+
     @spot.latitude = coordinate[:lat]
     @spot.longitude = coordinate[:lng]
 
     if @spot.save
       render json: @spot, status: :created, location: @spot
     else
-      render json: @spot.errors, status: :unprocessable_entity
+      render json: @spot.errors, status: :internal_server_error
     end
   end
 
@@ -35,7 +34,7 @@ class SpotsController < ApplicationController
     if @spot.update(spot_params)
       render json: @spot
     else
-      render json: @spot.errors, status: :unprocessable_entity
+      render json: @spot.errors, status: :internal_server_error
     end
   end
 
@@ -56,40 +55,35 @@ class SpotsController < ApplicationController
 
   # 入力された住所から座標を取得
   def getCoordinate
-    spot_id = params[:id]
-    spot = Spot.find(spot_id)
+    spot = Spot.find(params[:id])
+    unless spot
+      return render json: { error: "投稿が見つかりません" }, status: :bad_request
+    end
 
     render json: { lat: spot.latitude, lng: spot.longitude }
   end
 
   def evaluate
     evaluation = Evaluation.find(params[:evaluation_id])
+    unless evaluation
+      return render json: { error: "評価レコードが存在しません" }, status: :bad_request
+    end
 
     # 新しく評価した星の数 - 前回評価した星の数をEvaluationレコードのstars_sumに加算する
     starsAmountThisTime = params[:stars_amount].to_i
-    puts starsAmountThisTime
-    puts evaluation.starsAmount
-    puts @spot.id
-    puts @spot.stars_sum
 
     addStarsAmount = starsAmountThisTime - evaluation.starsAmount.to_i
     @spot.stars_sum += addStarsAmount
 
-    puts addStarsAmount
-    puts @spot.stars_sum
-
     evaluation.starsAmount = starsAmountThisTime
 
-    puts evaluation.starsAmount
-
     if not evaluation.save
-      render json: evaluation.errors, status: :unprocessable_entity
+      render json: evaluation.errors, status: :internal_server_error
     end
 
     evaluationsCount = Evaluation.where(spot_id: params[:id]).count
-    puts evaluationsCount
 
-    # Fix: Infinityを防ぐため、stars_sumが0であるかどうかを確認し、ゼロでない場合のみ平均値を計算する
+    # Infinityを防ぐため、stars_sumが0であるかどうかを確認し、ゼロでない場合のみ平均値を計算する
     if @spot.stars_sum > 0
       @spot.stars_avg = @spot.stars_sum / evaluationsCount.to_f
     else
@@ -99,7 +93,7 @@ class SpotsController < ApplicationController
     if @spot.save
       render json: @spot
     else
-      render json: @spot.errors, status: :unprocessable_entity
+      render json: @spot.errors, status: :internal_server_error
     end
   end
 
@@ -126,10 +120,7 @@ class SpotsController < ApplicationController
     response = RestClient.get(base_url, params: { address: address, key: api_key })
     result = JSON.parse(response.body)
 
-    puts result['status']
-
     if result['status'] == 'OK' && result['results'].present?
-      puts result['results'][0]['geometry']['location']
       location = result['results'][0]['geometry']['location']
       { lat: location['lat'], lng: location['lng'] }
     else

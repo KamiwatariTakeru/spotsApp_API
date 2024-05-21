@@ -7,7 +7,7 @@ class LikesController < ApplicationController
       if @like.save
         render json: @like, status: :created, location: @like
       else
-        render json: @like.errors, status: :unprocessable_entity
+        render json: @like.errors, status: :internal_server_error
       end
     end
 
@@ -18,6 +18,9 @@ class LikesController < ApplicationController
     private
       def set_like
         @like = Like.find_by(id: params[:id])
+        unless @like
+          return render json: { error: @like.errors.full_messages.join(", ") }, status: :bad_request
+        end
       end
 
       def like_params
