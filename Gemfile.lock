@@ -63,6 +63,8 @@ GEM
     concurrent-ruby (1.2.2)
     crass (1.0.6)
     date (3.3.3)
+    dockerfile-rails (1.6.14)
+      rails (>= 3.0.0)
     domain_name (0.6.20240107)
     erubi (1.12.0)
     ffi (1.16.3)
@@ -107,6 +109,8 @@ GEM
     nio4r (2.5.9)
     nokogiri (1.15.2)
       mini_portile2 (~> 2.8.2)
+      racc (~> 1.4)
+    nokogiri (1.15.2-x86_64-linux)
       racc (~> 1.4)
     puma (4.3.12)
       nio4r (~> 2.0)
@@ -175,10 +179,12 @@ GEM
 
 PLATFORMS
   ruby
+  x86_64-linux
 
 DEPENDENCIES
   bootsnap (>= 1.4.2)
   byebug
+  dockerfile-rails (>= 1.6)
   listen (~> 3.2)
   mysql2 (>= 0.4.4)
   puma (~> 4.1)

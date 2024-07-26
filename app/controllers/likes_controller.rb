@@ -19,7 +19,7 @@ class LikesController < ApplicationController
       def set_like
         @like = Like.find_by(id: params[:id])
         unless @like
-          return render json: { error: @like.errors.full_messages.join(", ") }, status: :bad_request
+          return render json: { error: "ユーザーが見つかりません" }, status: :bad_request
         end
       end
 
