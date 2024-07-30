@@ -1,9 +1,9 @@
-# fly.toml app configuration file generated for spots-post-backend-new on 2024-07-27T01:35:24+09:00
+# fly.toml app configuration file generated for spots-post-api on 2024-07-27T03:32:38+09:00
 #
 # See https://fly.io/docs/reference/configuration/ for information about how to use this file.
 #
 
-app = 'spots-post-backend-new'
+app = 'spots-post-api'
 primary_region = 'nrt'
 console_command = '/rails/bin/rails console'
 
@@ -19,6 +19,6 @@ console_command = '/rails/bin/rails console'
 
 [[vm]]
   size = 'shared-cpu-1x'
-  memory = '2gb'
+  memory = '1gb'
   cpu_kind = 'shared'
-  cpus = 2
+  cpus = 1
