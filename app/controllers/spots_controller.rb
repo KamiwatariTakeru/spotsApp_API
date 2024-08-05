@@ -4,7 +4,7 @@ class SpotsController < ApplicationController
   # GET /spots
   def index
     @spots = Spot.all
-
+    puts "aaa"
     if @spots.nil? || @spots.empty?
       puts "null"
       render json: [], status: :ok
