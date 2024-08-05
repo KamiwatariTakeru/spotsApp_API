@@ -6,10 +6,10 @@ class SpotsController < ApplicationController
     @spots = Spot.all
     puts "aaa"
     if @spots.nil? || @spots.empty?
-      puts "null"
+      puts "bbb"
       render json: [], status: :ok
     else
-      puts "not null"
+      puts "ccc"
       render json: @spots, status: :ok
     end
   end
