@@ -5,9 +5,11 @@ class SpotsController < ApplicationController
   def index
     @spots = Spot.all
 
-    if @spots.empty?
+    if @spots == null
+      puts "null"
       render json: [], status: :ok
     else
+      puts "not null"
       render json: @spots, status: :ok
     end
   end
