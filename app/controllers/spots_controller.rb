@@ -5,6 +5,7 @@ class SpotsController < ApplicationController
   def index
     @spots = Spot.all
     puts "aaa"
+    render json: [], status: :ok
     if @spots.nil? || @spots.empty?
       puts "bbb"
       render json: [], status: :ok
