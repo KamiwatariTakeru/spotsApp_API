@@ -5,10 +5,11 @@ class SpotsController < ApplicationController
   def index
     @spots = Spot.all
 
-    puts "aaa"
-    puts @spots
-
-    render json: @spots
+    if @spots.empty?
+      render json: [], status: :ok
+    else
+      render json: @spots, status: :ok
+    end
   end
 
   # GET /spots/1
