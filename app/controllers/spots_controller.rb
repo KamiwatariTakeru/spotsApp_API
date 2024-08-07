@@ -4,13 +4,10 @@ class SpotsController < ApplicationController
   # GET /spots
   def index
     @spots = Spot.all
-    # とりあえず空の配列を返して後で修正
-    render json: [], status: :ok
+
     if @spots.nil? || @spots.empty?
-      puts "bbb"
       render json: [], status: :ok
     else
-      puts "ccc"
       render json: @spots, status: :ok
     end
   end
@@ -22,20 +19,12 @@ class SpotsController < ApplicationController
 
   # POST /spots
   def create
-    puts params[:name]
-    puts params[:address]
-    puts params[:stars_sum]
-    puts params[:stars_avg]
 
     begin
       # 入力された住所から緯度経度を取得してテーブルに登録
       @spot = Spot.new(spot_params)
 
-      puts "1"
-
       coordinate = geocode_address(params[:address])
-
-      puts "2"
 
       if coordinate.nil?
         render json: { error: "Address geocoding failed" }, status: :unprocessable_entity
@@ -44,15 +33,12 @@ class SpotsController < ApplicationController
       @spot.latitude = coordinate[:lat]
       @spot.longitude = coordinate[:lng]
 
-      puts "3"
-
       if @spot.save
         render json: @spot, status: :created, location: @spot
       else
         render json: @spot.errors, status: :internal_server_error
       end
     rescue => e
-      puts "rescue"
       puts e
     end
   end
