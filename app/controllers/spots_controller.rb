@@ -22,7 +22,11 @@ class SpotsController < ApplicationController
 
   # POST /spots
   def create
-    puts "abab"
+    puts params[:name]
+    puts params[:address]
+    puts params[:stars_sum]
+    puts params[:stars_avg]
+
     @spot = Spot.new(spot_params)
     # 入力された住所から緯度経度を取得してテーブルに登録
     coordinate = geocode_address(params[:address])
