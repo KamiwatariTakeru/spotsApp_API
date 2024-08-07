@@ -5,6 +5,7 @@ class SpotsController < ApplicationController
   def index
     @spots = Spot.all
     puts "aaa"
+    # とりあえず空の配列を返して後で修正
     render json: [], status: :ok
     if @spots.nil? || @spots.empty?
       puts "bbb"
