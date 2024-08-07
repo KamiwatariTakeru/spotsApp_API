@@ -27,17 +27,33 @@ class SpotsController < ApplicationController
     puts params[:stars_sum]
     puts params[:stars_avg]
 
-    @spot = Spot.new(spot_params)
-    # 入力された住所から緯度経度を取得してテーブルに登録
-    coordinate = geocode_address(params[:address])
+    begin
+      # 入力された住所から緯度経度を取得してテーブルに登録
+      @spot = Spot.new(spot_params)
 
-    @spot.latitude = coordinate[:lat]
-    @spot.longitude = coordinate[:lng]
+      puts "1"
 
-    if @spot.save
-      render json: @spot, status: :created, location: @spot
-    else
-      render json: @spot.errors, status: :internal_server_error
+      coordinate = geocode_address(params[:address])
+
+      puts "2"
+
+      if coordinate.nil?
+        render json: { error: "Address geocoding failed" }, status: :unprocessable_entity
+      end
+
+      @spot.latitude = coordinate[:lat]
+      @spot.longitude = coordinate[:lng]
+
+      puts "3"
+
+      if @spot.save
+        render json: @spot, status: :created, location: @spot
+      else
+        render json: @spot.errors, status: :internal_server_error
+      end
+    rescue => e
+      puts "rescue"
+      puts e
     end
   end
 
