@@ -4,7 +4,6 @@ class SpotsController < ApplicationController
   # GET /spots
   def index
     @spots = Spot.all
-    puts "aaa"
     # とりあえず空の配列を返して後で修正
     render json: [], status: :ok
     if @spots.nil? || @spots.empty?
@@ -23,6 +22,7 @@ class SpotsController < ApplicationController
 
   # POST /spots
   def create
+    puts "abab"
     @spot = Spot.new(spot_params)
     # 入力された住所から緯度経度を取得してテーブルに登録
     coordinate = geocode_address(params[:address])
